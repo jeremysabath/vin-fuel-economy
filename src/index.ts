@@ -1,40 +1,9 @@
 import fs from "fs"
 import path from "path"
 import csv from "csv-parser"
+import { RawVinDataPoint, IdentifyingInfo, MPGData, RegistrationInfo } from "./types"
 
 console.log("Hello VIN Fuel Economy!")
-
-interface MPGData {
-  make: string
-  model: string
-  year: string
-  fuelType1: string
-  fuelType2: string
-  displ: string
-  trany: string
-  cylinders: string
-  [key: string]: string
-}
-
-interface RawVinDataPoint {
-  Value: string | null
-  ValueId: string
-  Variable: string
-  VariableId: number
-}
-
-interface IdentifyingInfo {
-  vin: string
-  make: string | null
-  model: string | null
-  year: string | null
-  fuelTypePrimary: string | null
-  fuelTypeSecondary: string | null
-  displacement: string | null
-  transmissionStyle: string | null
-  transmissionSpeed: string | null
-  cylinders: string | null
-}
 
 const parseVinData = (
   vin: string,
@@ -61,6 +30,7 @@ const parseVinData = (
 }
 
 const main = async (): Promise<void> => {
+  // Read the MPG Data into an array
   const mpgData: MPGData[] = []
   await new Promise((resolve, reject): void => {
     fs.createReadStream(path.join(__dirname, "data/mpg-data.csv"))
@@ -75,6 +45,22 @@ const main = async (): Promise<void> => {
       })
   })
   console.log("read MPG data")
+
+  // Read the VIN Data into an array
+  const registrations: RegistrationInfo[] = []
+  await new Promise((resolve, reject): void => {
+    fs.createReadStream(path.join(__dirname, "data/bedford-vehicle-registrations.csv"))
+      .pipe(csv())
+      .on("data", (data: RegistrationInfo): void => {
+        registrations.push(data)
+      })
+      .on("error", err => reject(err))
+      .on("end", () => {
+        console.log(`Read ${registrations.length} registrations`)
+        resolve()
+      })
+  })
+  console.log("read registration data, e.g. ", registrations[0])
 
   // Takes a vehicle's identifying info and attempts to look up the corresponding
   // MPG data record. Returns the complete MPGData record if found, otherwise null.
