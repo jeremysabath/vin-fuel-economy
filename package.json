@@ -1,0 +1,44 @@
+{
+  "name": "node-ts-starter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon",
+    "build": "rimraf ./build && tsc",
+    "start:prod": "npm run build && node build/index.js",
+    "lint": "eslint src --ext=js --ext=jsx --ext=ts --ext=tsx",
+    "prettier": "prettier \"src/**/*.+(ts|json)\"",
+    "pretty-check": "npm run prettier -- --check",
+    "prettify": "npm run prettier -- --write",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "typecheck": "tsc --skipLibCheck",
+    "validate": "npm run typecheck && lint-staged"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^13.13.4",
+    "@typescript-eslint/eslint-plugin": "^2.30.0",
+    "@typescript-eslint/parser": "^2.30.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.11.0",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.1.7",
+    "nodemon": "^2.0.3",
+    "prettier": "^2.0.5",
+    "rimraf": "^3.0.2",
+    "ts-node": "^8.9.1",
+    "typescript": "^3.8.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run validate"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": "eslint --cache --fix",
+    "*.{js,css,md}": "prettier --write"
+  }
+}
