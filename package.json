@@ -40,5 +40,9 @@
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": "eslint --cache --fix",
     "*.{js,css,md}": "prettier --write"
+  },
+  "dependencies": {
+    "csv-parser": "^2.3.3",
+    "promisify": "0.0.3"
   }
 }
