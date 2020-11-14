@@ -7,6 +7,7 @@ import {
   RawVinDataPoint,
   RegistrationInfo,
 } from "./types"
+import axios from "axios"
 
 export const parseVinData = (
   vin: string,
@@ -87,39 +88,77 @@ export const findMpgData = (
   console.log("findMpgData for VIN Info: ", vinInfo)
 
   const matches = mpgData.filter((mpgRecord): boolean => {
-    // prettier-ignore
-    return !!(
-        vinInfo.make &&
-        vinInfo.make.toLowerCase() === mpgRecord.make.toLowerCase() &&
+    if (
+      !vinInfo.make ||
+      vinInfo.make.toLowerCase() !== mpgRecord.make.toLowerCase()
+    )
+      return false
 
-        vinInfo.model &&
-        vinInfo.model.toLowerCase() === mpgRecord.model.toLowerCase() &&
+    if (
+      !vinInfo.model ||
+      mpgRecord.model.toLowerCase().indexOf(vinInfo.model.toLowerCase()) === -1
+    )
+      return false
 
-        // The model year is a valid number and matches the mpgRecord year.
-        !Number.isNaN(Number(vinInfo.year)) &&
-        Number(vinInfo.year) &&
-        Number(vinInfo.year) === Number(mpgRecord.year) &&
+    // The model year is a valid number and matches the mpgRecord year.
+    if (
+      Number.isNaN(Number(vinInfo.year)) ||
+      Number(vinInfo.year) !== Number(mpgRecord.year)
+    )
+      return false
 
-        // Fuel Types are defined and the same, or are both undefined/null/""
-        ((vinInfo.fuelTypePrimary && mpgRecord.fuelType1 !== "" && vinInfo.fuelTypePrimary.toLowerCase() === mpgRecord.fuelType1.toLowerCase()) || 
-        (!vinInfo.fuelTypePrimary && mpgRecord.fuelType1 === "")) &&
-
-        ((vinInfo.fuelTypeSecondary && mpgRecord.fuelType2 !== "" && vinInfo.fuelTypeSecondary.toLowerCase() === mpgRecord.fuelType2.toLowerCase()) || 
-        (!vinInfo.fuelTypeSecondary && mpgRecord.fuelType2 === "")) &&
-        
-        !Number.isNaN(Number(vinInfo.displacement)) && Number(vinInfo.displacement).toFixed(1) === Number(mpgRecord.displ).toFixed(1) &&
-
-        // Match on Transmission. Look for the transmission style and speed string anywhere in the mpgRecord's one `trany` string
-        (vinInfo.transmissionStyle 
-          ? mpgRecord.trany.toLowerCase().indexOf(vinInfo.transmissionStyle.toLowerCase()) >= 0 
-          : true)
-          &&
-        (vinInfo.transmissionSpeed 
-          ? mpgRecord.trany.toLowerCase().indexOf(vinInfo.transmissionSpeed.toLowerCase()) >= 0 
-          : true) &&
-
-        !Number.isNaN(Number(vinInfo.cylinders)) && Number(vinInfo.cylinders) === Number(mpgRecord.cylinders)
+    // If we have fuel type info for the VIN, attempt to match it, otherwise ignore.
+    if (vinInfo.fuelTypePrimary && vinInfo.fuelTypePrimary !== "") {
+      if (
+        mpgRecord.fuelType1
+          .toLowerCase()
+          .indexOf(vinInfo.fuelTypePrimary.toLowerCase()) === -1
       )
+        return false
+    }
+
+    if (vinInfo.fuelTypeSecondary && vinInfo.fuelTypeSecondary !== "") {
+      if (
+        mpgRecord.fuelType2
+          .toLowerCase()
+          .indexOf(vinInfo.fuelTypeSecondary.toLowerCase()) === -1
+      )
+        return false
+    }
+
+    if (vinInfo.displacement) {
+      if (
+        Number(vinInfo.displacement).toFixed(1) !==
+        Number(mpgRecord.displ).toFixed(1)
+      )
+        return false
+    }
+
+    // Match on Transmission. Look for the transmission style and speed string anywhere in the mpgRecord's one `trany` string
+    if (vinInfo.transmissionStyle) {
+      if (
+        mpgRecord.trany
+          .toLowerCase()
+          .indexOf(vinInfo.transmissionStyle.toLowerCase()) === -1
+      )
+        return false
+    }
+
+    if (vinInfo.transmissionSpeed) {
+      if (
+        mpgRecord.trany
+          .toLowerCase()
+          .indexOf(vinInfo.transmissionSpeed.toLowerCase()) === -1
+      )
+        return false
+    }
+
+    if (vinInfo.cylinders) {
+      if (Number(vinInfo.cylinders) !== Number(mpgRecord.cylinders))
+        return false
+    }
+
+    return true
   })
 
   if (matches.length === 0) {
@@ -133,6 +172,23 @@ export const findMpgData = (
   }
 
   // More than 1 match.
-  console.log(`${matches.length} matches`)
+  console.log(`${matches.length} matches: `, matches)
   return null
+}
+
+// Fetch VIN data via API and transform to the model's identifying info
+export const getVinInfo = async (
+  vin: string,
+  year: string
+): Promise<IdentifyingInfo | null> => {
+  try {
+    const { data } = await axios.get(
+      `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinExtended/${vin}?format=json&modelyear=${year}`
+    )
+
+    return parseVinData(vin, data.Results)
+  } catch (err) {
+    console.error(`Error loading data for VIN: ${vin}`, err)
+    return null
+  }
 }

@@ -1,5 +1,6 @@
 export interface RegistrationInfo {
   VIN: string
+  "Model Year": string
   [key: string]: string
 }
 

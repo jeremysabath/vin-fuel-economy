@@ -1,6 +1,4 @@
-import fs from "fs"
-import path from "path"
-import { findMpgData, parseVinData, readData } from "./functions"
+import { findMpgData, getVinInfo, readData } from "./functions"
 
 console.log("Hello VIN Fuel Economy!")
 
@@ -10,15 +8,21 @@ const main = async (): Promise<void> => {
 
   const { mpgData, registrations } = data
 
-  const sampleVinDataFile = fs.readFileSync(
-    path.join(__dirname, "data/sample-vin-data-2.json"),
-    "utf-8"
-  )
-  const sampleVinData = JSON.parse(sampleVinDataFile)
-  const vinInfo = parseVinData("5YJXCDE25HF037940", sampleVinData.Results)
-  console.log("key vin data: ", vinInfo)
+  // const sampleVinDataFile = fs.readFileSync(
+  //   path.join(__dirname, "data/sample-vin-data-2.json"),
+  //   "utf-8"
+  // )
+  const registration = registrations[8000]
+  const vinInfo = await getVinInfo(registration.VIN, registration["Model Year"])
+  console.log("got vinInfo: ", vinInfo)
 
-  const mpgRecord = findMpgData(vinInfo, mpgData)
+  if (vinInfo) {
+    const mpgRecord = findMpgData(vinInfo, mpgData)
+  } else {
+    console.log(
+      `Couldn't get vehicle info from VIN ${registration.VIN}, skipping`
+    )
+  }
 }
 
 main()
