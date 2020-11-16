@@ -19,6 +19,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/lodash.samplesize": "^4.2.6",
     "@types/node": "^13.13.4",
     "@typescript-eslint/eslint-plugin": "^2.30.0",
     "@typescript-eslint/parser": "^2.30.0",
@@ -42,8 +43,12 @@
     "*.{js,css,md}": "prettier --write"
   },
   "dependencies": {
+    "@types/mkdirp": "^1.0.1",
     "axios": "^0.21.0",
     "csv-parser": "^2.3.3",
+    "csv-writer": "^1.6.0",
+    "lodash.samplesize": "^4.2.0",
+    "moment": "^2.29.1",
     "promisify": "0.0.3"
   }
 }

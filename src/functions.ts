@@ -84,7 +84,7 @@ export const readData = async (): Promise<{
 export const findMpgData = (
   vinInfo: IdentifyingInfo,
   mpgData: MPGData[]
-): MPGData | null => {
+): MPGData[] => {
   console.log("findMpgData for VIN Info: ", vinInfo)
 
   const matches = mpgData.filter((mpgRecord): boolean => {
@@ -161,22 +161,10 @@ export const findMpgData = (
     return true
   })
 
-  if (matches.length === 0) {
-    console.log("No match")
-    return null
-  }
-
-  if (matches.length === 1) {
-    console.log("Success, found 1 match: ", matches[0])
-    return matches[0]
-  }
-
-  // More than 1 match.
-  console.log(`${matches.length} matches: `, matches)
-  return null
+  return matches
 }
 
-// Fetch VIN data via API and transform to the model's identifying info
+/** Fetch VIN data via API and extract the model's identifying info, or null if error */
 export const getVinInfo = async (
   vin: string,
   year: string
