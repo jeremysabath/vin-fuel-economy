@@ -25,7 +25,11 @@ export interface MPGData {
  * TOOO: If multiple matches, returns averages of the numeric MPGData of the matches
  */
 export type CombinedData = RegistrationInfo &
-  Partial<MPGData> & { numMatches: number; matches: string }
+  Partial<MPGData> & {
+    numMatches: number
+    matches: string
+    decidingFactor?: string
+  }
 
 export interface RawVinDataPoint {
   Value: string | null

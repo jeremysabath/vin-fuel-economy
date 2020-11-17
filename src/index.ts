@@ -1,6 +1,6 @@
 import sampleSize from "lodash.samplesize"
 import moment from "moment"
-import { findMpgData, getVinInfo, readData } from "./functions"
+import { countUnique, findMpgData, getVinInfo, readData } from "./functions"
 import { CombinedData } from "./types"
 import { createObjectCsvWriter } from "csv-writer"
 import mkdirp from "mkdirp"
@@ -24,7 +24,9 @@ const main = async (): Promise<void> => {
   const results: CombinedData[] = []
 
   // Get a random sample of the registration data.
-  const sample = sampleSize(registrations, 100)
+  const n = 20
+  const startIndex = 4000
+  const sample = registrations.slice(startIndex, startIndex + n) // sampleSize(registrations, n)
   console.log(
     `registrations in sample: ${sample.length}. Total registrations: ${registrations.length}`
   )
@@ -35,10 +37,9 @@ const main = async (): Promise<void> => {
       registration.VIN,
       registration["Model Year"]
     )
-    console.log("got vinInfo: ", vinInfo)
 
     if (vinInfo) {
-      const matches = findMpgData(vinInfo, mpgData)
+      const { matches, decidingFactor } = findMpgData(vinInfo, mpgData)
       if (matches.length === 0) console.log("No match")
       if (matches.length === 1)
         console.log("Success, found 1 match: ", matches[0])
@@ -52,6 +53,7 @@ const main = async (): Promise<void> => {
         ...registration,
         numMatches: matches.length,
         matches: matches.map((match): string => match.id).toString(),
+        decidingFactor,
       }
       const match = matches.length > 0 ? matches[0] : null
       if (match) Object.assign(result, match)
@@ -91,6 +93,7 @@ const main = async (): Promise<void> => {
         { id: "Revocation Indicator", title: "Revocation Indicator" },
         { id: "numMatches", title: "Num Matches" },
         { id: "matches", title: "Match IDs" },
+        { id: "decidingFactor", title: "Deciding Factor" },
 
         // MPG Data
         { id: "id", title: "MPG Data ID" },
@@ -165,6 +168,19 @@ const main = async (): Promise<void> => {
     console.log("Success")
     console.log(`Finished at ${moment().format("h:mm:ss")}`)
     console.log(`Duration: ${moment().diff(startTime, "second")} seconds`)
+
+    const resultsWithAMatch = results.filter(
+      (result): boolean => result.numMatches > 0
+    )
+    console.log(
+      `Match rate: ${((resultsWithAMatch.length / n) * 100).toFixed(2)}%`
+    )
+
+    const rawMatchCounts = results.map((result): string =>
+      String(result.numMatches)
+    )
+    const matchFrequency = countUnique(rawMatchCounts)
+    console.table(matchFrequency)
   } catch (error) {
     console.error("Error writing records: ", error)
   }

@@ -8,6 +8,7 @@ import {
   RegistrationInfo,
 } from "./types"
 import axios from "axios"
+import { stringify } from "querystring"
 
 export const parseVinData = (
   vin: string,
@@ -79,89 +80,177 @@ export const readData = async (): Promise<{
   }
 }
 
+/**
+ * Counts the number of occurrences of each value in an array.
+ * Returns an array of objects, each object with the value and count.
+ */
+export const countUnique = (
+  data: string[]
+): { value: string; count: number }[] => {
+  const results: { [key: string]: number } = {}
+
+  data.forEach((value): void => {
+    const count = results[value]
+    results[value] = typeof count === "number" ? count + 1 : 1
+  })
+
+  return Object.keys(results).map((value): {
+    value: string
+    count: number
+  } => ({ value, count: results[value] }))
+}
+
+interface Matcher<T> {
+  label: string
+  matchFn: (item: T) => boolean
+}
+
+const getMatches = <T>(
+  data: T[],
+  matchers: Matcher<T>[]
+): { matches: T[]; decidingFactor?: string } => {
+  let matches: T[] | undefined
+  let decidingFactor: string | undefined
+
+  for (let i = 0; i < matchers.length; i += 1) {
+    const matcher = matchers[i]
+
+    // The first time, use the complete data set. Once we've matched, use the matches.
+    const remainingData = !matches ? data : matches
+    const nextMatches = remainingData.filter(matcher.matchFn)
+
+    // If the first (broadest) matcher returns no matches, return early.
+    if (i === 0 && nextMatches.length === 0) {
+      console.log(`(${matcher.label}): no initial matches, skipping.`)
+      return { matches: [], decidingFactor: matcher.label }
+    }
+
+    // If this matcher found a unique match in the remaining set, exit the loop, we have our match.
+    if (nextMatches.length === 1) {
+      console.log(`(${matcher.label}): 1 match `)
+      matches = [...nextMatches]
+      decidingFactor = matcher.label
+      break
+    }
+
+    // If there are still multiple matches, update the match list for the next matcher to have a go.
+    if (nextMatches.length > 1) {
+      console.log(`(${matcher.label}): ${nextMatches.length} matches `)
+      matches = [...nextMatches]
+    }
+
+    // If there were no matches with this matcher, do nothing, run the next matcher on the same data.
+    if (nextMatches.length === 0) {
+      console.log(`(${matcher.label}): 0 matches `)
+    }
+  }
+
+  return {
+    matches: matches || [],
+    decidingFactor,
+  }
+}
+
 // Takes a vehicle's identifying info and attempts to look up the corresponding
-// MPG data record. Returns the complete MPGData record if found, otherwise null.
+// MPG data record. Returns an array of matching MPG Data records, along with a `decidingFactor`,
+// the characteristic that reduced the match count to 1, when applicable.
 export const findMpgData = (
   vinInfo: IdentifyingInfo,
   mpgData: MPGData[]
-): MPGData[] => {
+): { matches: MPGData[]; decidingFactor?: string } => {
   console.log("findMpgData for VIN Info: ", vinInfo)
 
-  const matches = mpgData.filter((mpgRecord): boolean => {
-    if (
-      !vinInfo.make ||
-      vinInfo.make.toLowerCase() !== mpgRecord.make.toLowerCase()
-    )
-      return false
+  const matchers: Matcher<MPGData>[] = [
+    {
+      label: "makeModelYear",
+      matchFn: (mpgRecord): boolean => {
+        if (
+          !vinInfo.make ||
+          vinInfo.make.toLowerCase() !== mpgRecord.make.toLowerCase()
+        )
+          return false
 
-    if (
-      !vinInfo.model ||
-      mpgRecord.model.toLowerCase().indexOf(vinInfo.model.toLowerCase()) === -1
-    )
-      return false
+        if (
+          !vinInfo.model ||
+          mpgRecord.model.toLowerCase().indexOf(vinInfo.model.toLowerCase()) ===
+            -1
+        )
+          return false
 
-    // The model year is a valid number and matches the mpgRecord year.
-    if (
-      Number.isNaN(Number(vinInfo.year)) ||
-      Number(vinInfo.year) !== Number(mpgRecord.year)
-    )
-      return false
+        // The model year is a valid number and matches the mpgRecord year.
+        if (
+          Number.isNaN(Number(vinInfo.year)) ||
+          Number(vinInfo.year) !== Number(mpgRecord.year)
+        )
+          return false
 
-    // If we have fuel type info for the VIN, attempt to match it, otherwise ignore.
-    if (vinInfo.fuelTypePrimary && vinInfo.fuelTypePrimary !== "") {
-      if (
-        mpgRecord.fuelType1
-          .toLowerCase()
-          .indexOf(vinInfo.fuelTypePrimary.toLowerCase()) === -1
-      )
-        return false
-    }
+        return true
+      },
+    },
+    {
+      label: "fuelTypePrimary",
+      matchFn: (mpgRecord): boolean =>
+        // If we have fuel type info for the VIN and it's in the MPG record's fuel type text.
+        !!(
+          vinInfo.fuelTypePrimary &&
+          vinInfo.fuelTypePrimary !== "" &&
+          mpgRecord.fuelType1
+            .toLowerCase()
+            .indexOf(vinInfo.fuelTypePrimary.toLowerCase()) !== -1
+        ),
+    },
+    {
+      label: "fuelTypeSecondary",
+      matchFn: (mpgRecord): boolean =>
+        !!(
+          vinInfo.fuelTypeSecondary &&
+          vinInfo.fuelTypeSecondary !== "" &&
+          mpgRecord.fuelType2
+            .toLowerCase()
+            .indexOf(vinInfo.fuelTypeSecondary.toLowerCase()) !== -1
+        ),
+    },
+    {
+      label: "displacement",
+      matchFn: (mpgRecord): boolean =>
+        !!(
+          vinInfo.displacement &&
+          Number(vinInfo.displacement).toFixed(1) ===
+            Number(mpgRecord.displ).toFixed(1)
+        ),
+    },
+    {
+      label: "transmissionStyle",
+      matchFn: (mpgRecord): boolean =>
+        // Match on Transmission. Look for the transmission style and speed string anywhere in the mpgRecord's one `trany` string
+        !!(
+          vinInfo.transmissionStyle &&
+          mpgRecord.trany
+            .toLowerCase()
+            .indexOf(vinInfo.transmissionStyle.toLowerCase()) !== -1
+        ),
+    },
+    {
+      label: "transmissionSpeed",
+      matchFn: (mpgRecord): boolean =>
+        !!(
+          vinInfo.transmissionSpeed &&
+          mpgRecord.trany
+            .toLowerCase()
+            .indexOf(vinInfo.transmissionSpeed.toLowerCase()) !== -1
+        ),
+    },
+    {
+      label: "cylinders",
+      matchFn: (mpgRecord): boolean =>
+        !!(
+          vinInfo.cylinders &&
+          Number(vinInfo.cylinders) === Number(mpgRecord.cylinders)
+        ),
+    },
+  ]
 
-    if (vinInfo.fuelTypeSecondary && vinInfo.fuelTypeSecondary !== "") {
-      if (
-        mpgRecord.fuelType2
-          .toLowerCase()
-          .indexOf(vinInfo.fuelTypeSecondary.toLowerCase()) === -1
-      )
-        return false
-    }
-
-    if (vinInfo.displacement) {
-      if (
-        Number(vinInfo.displacement).toFixed(1) !==
-        Number(mpgRecord.displ).toFixed(1)
-      )
-        return false
-    }
-
-    // Match on Transmission. Look for the transmission style and speed string anywhere in the mpgRecord's one `trany` string
-    if (vinInfo.transmissionStyle) {
-      if (
-        mpgRecord.trany
-          .toLowerCase()
-          .indexOf(vinInfo.transmissionStyle.toLowerCase()) === -1
-      )
-        return false
-    }
-
-    if (vinInfo.transmissionSpeed) {
-      if (
-        mpgRecord.trany
-          .toLowerCase()
-          .indexOf(vinInfo.transmissionSpeed.toLowerCase()) === -1
-      )
-        return false
-    }
-
-    if (vinInfo.cylinders) {
-      if (Number(vinInfo.cylinders) !== Number(mpgRecord.cylinders))
-        return false
-    }
-
-    return true
-  })
-
-  return matches
+  return getMatches(mpgData, matchers)
 }
 
 /** Fetch VIN data via API and extract the model's identifying info, or null if error */
