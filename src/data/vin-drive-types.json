@@ -1,0 +1,30 @@
+{
+  "Count": 23,
+  "Message": "Results returned successfully",
+  "SearchCriteria": "Variable:15",
+  "Results": [
+    { "ElementName": "Drive Type", "Id": 1, "Name": "FWD/Front Wheel Drive" },
+    { "ElementName": "Drive Type", "Id": 2, "Name": "4WD/4-Wheel Drive/4x4" },
+    { "ElementName": "Drive Type", "Id": 3, "Name": "AWD/All Wheel Drive" },
+    { "ElementName": "Drive Type", "Id": 4, "Name": "RWD/ Rear Wheel Drive" },
+    { "ElementName": "Drive Type", "Id": 5, "Name": "6x4" },
+    { "ElementName": "Drive Type", "Id": 6, "Name": "Other" },
+    { "ElementName": "Drive Type", "Id": 7, "Name": "4x2" },
+    { "ElementName": "Drive Type", "Id": 8, "Name": "Glider" },
+    { "ElementName": "Drive Type", "Id": 9, "Name": "6x2" },
+    { "ElementName": "Drive Type", "Id": 10, "Name": "8x8" },
+    { "ElementName": "Drive Type", "Id": 12, "Name": "8x4" },
+    { "ElementName": "Drive Type", "Id": 13, "Name": "6x6" },
+    { "ElementName": "Drive Type", "Id": 14, "Name": "8x6" },
+    { "ElementName": "Drive Type", "Id": 15, "Name": "10x4" },
+    { "ElementName": "Drive Type", "Id": 16, "Name": "10x6" },
+    { "ElementName": "Drive Type", "Id": 17, "Name": "12x4" },
+    { "ElementName": "Drive Type", "Id": 18, "Name": "12x6" },
+    { "ElementName": "Drive Type", "Id": 19, "Name": "14x4" },
+    { "ElementName": "Drive Type", "Id": 20, "Name": "8x2" },
+    { "ElementName": "Drive Type", "Id": 21, "Name": "10x10" },
+    { "ElementName": "Drive Type", "Id": 22, "Name": "14x6" },
+    { "ElementName": "Drive Type", "Id": 23, "Name": "10x8" },
+    { "ElementName": "Drive Type", "Id": 24, "Name": "2WD/4WD" }
+  ]
+}

@@ -14,6 +14,7 @@ export interface MPGData {
   displ: string
   trany: string
   cylinders: string
+  drive: string
   [key: string]: any
 }
 
@@ -49,4 +50,23 @@ export interface IdentifyingInfo {
   transmissionStyle: string | null
   transmissionSpeed: string | null
   cylinders: string | null
+  drive: string | null
+}
+
+/* 
+  Unique MPG Data drive types:
+  - 2-Wheel Drive
+  - Front-Wheel Drive
+  - Rear-Wheel Drive
+  - Part-time 4-Wheel Drive
+  - 4-Wheel Drive
+  - All-Wheel Drive
+  - 4-Wheel or All-Wheel Drive
+*/
+export enum VINDriveType {
+  FWD = "FWD/Front Wheel Drive",
+  FourWD = "4WD/4-Wheel Drive/4x4",
+  AWD = "AWD/All Wheel Drive",
+  RWD = "RWD/ Rear Wheel Drive",
+  PartTimeFourWD = "2WD/4WD",
 }

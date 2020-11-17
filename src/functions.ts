@@ -6,9 +6,9 @@ import {
   MPGData,
   RawVinDataPoint,
   RegistrationInfo,
+  VINDriveType,
 } from "./types"
 import axios from "axios"
-import { stringify } from "querystring"
 
 export const parseVinData = (
   vin: string,
@@ -31,6 +31,7 @@ export const parseVinData = (
     transmissionStyle: parsed["Transmission Style"],
     transmissionSpeed: parsed["Transmission Speeds"],
     cylinders: parsed["Engine Number of Cylinders"],
+    drive: parsed["Drive Type"],
   }
 }
 
@@ -209,6 +210,51 @@ export const findMpgData = (
             .toLowerCase()
             .indexOf(vinInfo.fuelTypeSecondary.toLowerCase()) !== -1
         ),
+    },
+    {
+      label: "driveType",
+      matchFn: (mpgRecord): boolean => {
+        const { drive: vinDriveType } = vinInfo
+        const { drive: mpgRecordDriveType } = mpgRecord
+
+        // console.log(
+        //   `vidDriveType: ${vinDriveType}, mpgRecordDriveType: ${mpgRecordDriveType}`
+        // )
+        if (!vinDriveType) return false
+
+        switch (vinDriveType) {
+          // If vehicle is "FWD", match on any MPG Records
+          // labeled Front-Wheel Drive or 2-Wheel Drive.
+          case VINDriveType.FWD:
+            return (
+              mpgRecordDriveType === "Front-Wheel Drive" ||
+              mpgRecordDriveType === "2-Wheel Drive" ||
+              mpgRecordDriveType === "4x2"
+            )
+
+          case VINDriveType.RWD:
+            return (
+              mpgRecordDriveType === "Read-Wheel Drive" ||
+              mpgRecordDriveType === "2-Wheel Drive" ||
+              mpgRecordDriveType === "4x2"
+            )
+
+          case VINDriveType.FourWD:
+          case VINDriveType.AWD:
+            return (
+              mpgRecordDriveType === "4-Wheel Drive" ||
+              mpgRecordDriveType === "All-Wheel Drive" ||
+              mpgRecordDriveType === "4-Wheel or All-Wheel Drive"
+            )
+
+          case VINDriveType.PartTimeFourWD:
+            return mpgRecordDriveType === "Part-time 4-Wheel Drive"
+
+          default:
+            console.log(`Other drive type: ${vinDriveType}`)
+            return false
+        }
+      },
     },
     {
       label: "displacement",

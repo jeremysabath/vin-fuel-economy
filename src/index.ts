@@ -23,9 +23,9 @@ const main = async (): Promise<void> => {
   const { mpgData, registrations } = data
   const results: CombinedData[] = []
 
-  // Get a random sample of the registration data.
+  // Get a sample of the registration data for testing.
   const n = 20
-  const startIndex = 4000
+  const startIndex = 7000
   const sample = registrations.slice(startIndex, startIndex + n) // sampleSize(registrations, n)
   console.log(
     `registrations in sample: ${sample.length}. Total registrations: ${registrations.length}`
