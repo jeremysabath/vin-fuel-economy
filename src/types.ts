@@ -62,6 +62,7 @@ export interface IdentifyingInfo {
   - 4-Wheel Drive
   - All-Wheel Drive
   - 4-Wheel or All-Wheel Drive
+  - 4x2
 */
 export enum VINDriveType {
   FWD = "FWD/Front Wheel Drive",
@@ -69,4 +70,5 @@ export enum VINDriveType {
   AWD = "AWD/All Wheel Drive",
   RWD = "RWD/ Rear Wheel Drive",
   PartTimeFourWD = "2WD/4WD",
+  FourByTwo = "4x2",
 }

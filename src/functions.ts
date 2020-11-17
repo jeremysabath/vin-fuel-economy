@@ -217,9 +217,9 @@ export const findMpgData = (
         const { drive: vinDriveType } = vinInfo
         const { drive: mpgRecordDriveType } = mpgRecord
 
-        // console.log(
-        //   `vidDriveType: ${vinDriveType}, mpgRecordDriveType: ${mpgRecordDriveType}`
-        // )
+        console.log(
+          `vinDriveType: ${vinDriveType}, mpgRecordDriveType: ${mpgRecordDriveType}`
+        )
         if (!vinDriveType) return false
 
         switch (vinDriveType) {
@@ -228,15 +228,20 @@ export const findMpgData = (
           case VINDriveType.FWD:
             return (
               mpgRecordDriveType === "Front-Wheel Drive" ||
-              mpgRecordDriveType === "2-Wheel Drive" ||
-              mpgRecordDriveType === "4x2"
+              mpgRecordDriveType === "2-Wheel Drive"
             )
 
           case VINDriveType.RWD:
             return (
               mpgRecordDriveType === "Read-Wheel Drive" ||
-              mpgRecordDriveType === "2-Wheel Drive" ||
-              mpgRecordDriveType === "4x2"
+              mpgRecordDriveType === "2-Wheel Drive"
+            )
+
+          case VINDriveType.FourByTwo:
+            return (
+              mpgRecordDriveType === "Front-Wheel Drive" ||
+              mpgRecordDriveType === "Read-Wheel Drive" ||
+              mpgRecordDriveType === "2-Wheel Drive"
             )
 
           case VINDriveType.FourWD:
@@ -267,14 +272,23 @@ export const findMpgData = (
     },
     {
       label: "transmissionStyle",
-      matchFn: (mpgRecord): boolean =>
+      matchFn: (mpgRecord): boolean => {
+        console.log(
+          `vinInfo.transmissionStyle: ${vinInfo.transmissionStyle}, mpgRecord.trany: ${mpgRecord.trany}`
+        )
         // Match on Transmission. Look for the transmission style and speed string anywhere in the mpgRecord's one `trany` string
-        !!(
+        return !!(
           vinInfo.transmissionStyle &&
-          mpgRecord.trany
+          // VIN Transmission type included in MPG data transmission type...
+          (mpgRecord.trany
             .toLowerCase()
-            .indexOf(vinInfo.transmissionStyle.toLowerCase()) !== -1
-        ),
+            .indexOf(vinInfo.transmissionStyle.toLowerCase()) !== -1 ||
+            // Or, if VIN transmission is "CVT", look for "variable gear ratio" in the MPG data
+            (vinInfo.transmissionStyle.indexOf("CVT") !== -1 &&
+              mpgRecord.trany.toLowerCase().indexOf("variable gear ratio") !==
+                -1))
+        )
+      },
     },
     {
       label: "transmissionSpeed",
