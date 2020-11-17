@@ -24,9 +24,10 @@ const main = async (): Promise<void> => {
   const results: CombinedData[] = []
 
   // Get a sample of the registration data for testing.
-  const n = 20
-  const startIndex = 7000
-  const sample = registrations.slice(startIndex, startIndex + n) // sampleSize(registrations, n)
+  const n = registrations.length
+  const startIndex = 0
+
+  const sample = registrations.slice(startIndex, startIndex + n) //sampleSize(registrations, n)
   console.log(
     `registrations in sample: ${sample.length}. Total registrations: ${registrations.length}`
   )
@@ -41,8 +42,7 @@ const main = async (): Promise<void> => {
     if (vinInfo) {
       const { matches, decidingFactor } = findMpgData(vinInfo, mpgData)
       if (matches.length === 0) console.log("No match")
-      if (matches.length === 1)
-        console.log("Success, found 1 match: ", matches[0])
+      if (matches.length === 1) console.log("Success, 1 match")
       if (matches.length > 1)
         console.log(
           `${matches.length} matches: `,
@@ -51,8 +51,20 @@ const main = async (): Promise<void> => {
 
       const result: CombinedData = {
         ...registration,
+        vinMake: vinInfo.make,
+        vinModel: vinInfo.model,
+        vinYear: vinInfo.year,
+        vinFuelTypePrimary: vinInfo.fuelTypePrimary,
+        vinFuelTypeSecondary: vinInfo.fuelTypeSecondary,
+        vinDisplacement: vinInfo.displacement,
+        vinTransmissionStyle: vinInfo.transmissionStyle,
+        vinTransmissionSpeed: vinInfo.transmissionSpeed,
+        vinCylinders: vinInfo.cylinders,
+        vinDrive: vinInfo.drive,
         numMatches: matches.length,
-        matches: matches.map((match): string => match.id).toString(),
+        matches: matches
+          .map((match): string => `${match.id} - ${match.model}`)
+          .toString(),
         decidingFactor,
       }
       const match = matches.length > 0 ? matches[0] : null
@@ -95,9 +107,21 @@ const main = async (): Promise<void> => {
         { id: "matches", title: "Match IDs" },
         { id: "decidingFactor", title: "Deciding Factor" },
 
+        // VIN Search Data + corresponding MPG Data fields
+        { id: "vinMake", title: "VIN - Make" },
+        { id: "vinModel", title: "VIN - Model" },
+        { id: "vinYear", title: "VIN - Year" },
+        { id: "vinFuelTypePrimary", title: "VIN - Fuel Type Primary" },
+        { id: "vinFuelTypeSecondary", title: "VIN - Fuel Type Secondary" },
+        { id: "vinDisplacement", title: "VIN - Displacement" },
+        { id: "vinTransmissionStyle", title: "VIN - Transmission Style" },
+        { id: "vinTransmissionSpeed", title: "VIN - Transmission Speed" },
+        { id: "vinCylinders", title: "VIN - Cylinders" },
+        { id: "vinDrive", title: "VIN - Drive Type" },
+
         // MPG Data
         { id: "id", title: "MPG Data ID" },
-        { id: "barrels08	", title: "barrels08	" },
+        { id: "barrels08", title: "barrels08" },
         { id: "barrelsA08", title: "barrelsA08" },
         { id: "charge240", title: "charge240" },
         { id: "city08", title: "city08" },
@@ -113,7 +137,7 @@ const main = async (): Promise<void> => {
         { id: "comb08", title: "comb08" },
         { id: "comb08U", title: "comb08U" },
         { id: "combA08", title: "combA08" },
-        { id: "combA08U	", title: "combA08U	" },
+        { id: "combA08U", title: "combA08U" },
         { id: "combE", title: "combE" },
         { id: "combinedCD", title: "combinedCD" },
         { id: "combinedUF", title: "combinedUF" },
@@ -127,6 +151,7 @@ const main = async (): Promise<void> => {
         { id: "fuelCostA08", title: "fuelCostA08" },
         { id: "fuelType", title: "fuelType" },
         { id: "fuelType1", title: "fuelType1" },
+        { id: "fuelType2", title: "fuelType2" },
         { id: "ghgScore", title: "ghgScore" },
         { id: "ghgScoreA", title: "ghgScoreA" },
         { id: "highway08", title: "highway08" },

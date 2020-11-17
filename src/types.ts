@@ -18,20 +18,6 @@ export interface MPGData {
   [key: string]: any
 }
 
-/**
- * RegistrationInfo with matched MPGData appended.
- * If multiple matches, returns MPGData of first match.
- * If no matches, returns no MPGData.
- * Also includes the total number of matches, and the IDs of each matching MPGData.
- * TOOO: If multiple matches, returns averages of the numeric MPGData of the matches
- */
-export type CombinedData = RegistrationInfo &
-  Partial<MPGData> & {
-    numMatches: number
-    matches: string
-    decidingFactor?: string
-  }
-
 export interface RawVinDataPoint {
   Value: string | null
   ValueId: string
@@ -52,6 +38,29 @@ export interface IdentifyingInfo {
   cylinders: string | null
   drive: string | null
 }
+/**
+ * RegistrationInfo with VIN lookup data and matched MPGData.
+ * If multiple matches, returns MPGData of first match.
+ * If no matches, returns no MPGData.
+ * Also includes the total number of matches, and the IDs of each matching MPGData.
+ * TOOO: If multiple matches, returns averages of the numeric MPGData of the matches
+ */
+export type CombinedData = RegistrationInfo & {
+  vinMake: string | null
+  vinModel: string | null
+  vinYear: string | null
+  vinFuelTypePrimary: string | null
+  vinFuelTypeSecondary: string | null
+  vinDisplacement: string | null
+  vinTransmissionStyle: string | null
+  vinTransmissionSpeed: string | null
+  vinCylinders: string | null
+  vinDrive: string | null
+} & Partial<MPGData> & {
+    numMatches: number
+    matches: string
+    decidingFactor?: string
+  }
 
 /* 
   Unique MPG Data drive types:

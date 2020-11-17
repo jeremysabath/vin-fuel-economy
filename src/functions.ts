@@ -233,14 +233,14 @@ export const findMpgData = (
 
           case VINDriveType.RWD:
             return (
-              mpgRecordDriveType === "Read-Wheel Drive" ||
+              mpgRecordDriveType === "Rear-Wheel Drive" ||
               mpgRecordDriveType === "2-Wheel Drive"
             )
 
           case VINDriveType.FourByTwo:
             return (
               mpgRecordDriveType === "Front-Wheel Drive" ||
-              mpgRecordDriveType === "Read-Wheel Drive" ||
+              mpgRecordDriveType === "Rear-Wheel Drive" ||
               mpgRecordDriveType === "2-Wheel Drive"
             )
 

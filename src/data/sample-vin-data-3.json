@@ -1,7 +1,7 @@
 {
   "Count": 142,
   "Message": "Results returned successfully. NOTE: Any missing decoded values should be interpreted as NHTSA does not have data on the specific variable. Missing value should NOT be interpreted as an indication that a feature or technology is unavailable for a vehicle.",
-  "SearchCriteria": "VIN:JF1GH6B60BH823467",
+  "SearchCriteria": "VIN:1GTCS149278170362",
   "Results": [
     {
       "Value": "",
@@ -39,63 +39,58 @@
       "Variable": "Destination Market",
       "VariableId": 10
     },
+    { "Value": "GMC", "ValueId": "472", "Variable": "Make", "VariableId": 26 },
     {
-      "Value": "SUBARU",
-      "ValueId": "523",
-      "Variable": "Make",
-      "VariableId": 26
-    },
-    {
-      "Value": "FUJI HEAVY INDUSTRIES U.S.A., INC. (C/O SUBARU OF AMERICA)",
-      "ValueId": "1075",
+      "Value": "GENERAL MOTORS LLC",
+      "ValueId": "984",
       "Variable": "Manufacturer Name",
       "VariableId": 27
     },
     {
-      "Value": "Impreza",
-      "ValueId": "2235",
+      "Value": "Canyon",
+      "ValueId": "4093",
       "Variable": "Model",
       "VariableId": 28
     },
     {
-      "Value": "2011",
+      "Value": "2007",
       "ValueId": "",
       "Variable": "Model Year",
       "VariableId": 29
     },
     {
-      "Value": "OTA",
+      "Value": "SHREVEPORT ",
       "ValueId": "",
       "Variable": "Plant City",
       "VariableId": 31
     },
-    { "Value": null, "ValueId": "", "Variable": "Series", "VariableId": 34 },
     {
-      "Value": "2.5i Limited",
+      "Value": "1/2 ton",
       "ValueId": "",
-      "Variable": "Trim",
-      "VariableId": 38
+      "Variable": "Series",
+      "VariableId": 34
     },
+    { "Value": null, "ValueId": "", "Variable": "Trim", "VariableId": 38 },
     {
-      "Value": "PASSENGER CAR",
-      "ValueId": "2",
+      "Value": "TRUCK ",
+      "ValueId": "3",
       "Variable": "Vehicle Type",
       "VariableId": 39
     },
     {
-      "Value": "JAPAN",
-      "ValueId": "3",
+      "Value": "UNITED STATES (USA)",
+      "ValueId": "6",
       "Variable": "Plant Country",
       "VariableId": 75
     },
     {
-      "Value": "FHI (Yajima Plant )",
+      "Value": "GM Truck Group",
       "ValueId": "",
       "Variable": "Plant Company Name",
       "VariableId": 76
     },
     {
-      "Value": "GUNMA",
+      "Value": "LOUISIANA",
       "ValueId": "",
       "Variable": "Plant State",
       "VariableId": 77
@@ -110,7 +105,7 @@
       "VariableId": 136
     },
     {
-      "Value": "1075",
+      "Value": "984",
       "ValueId": "",
       "Variable": "Manufacturer Id",
       "VariableId": 157
@@ -122,12 +117,12 @@
       "VariableId": 158
     },
     {
-      "Value": "Hatchback/Liftback/Notchback",
-      "ValueId": "5",
+      "Value": "Pickup",
+      "ValueId": "60",
       "Variable": "Body Class",
       "VariableId": 5
     },
-    { "Value": "5", "ValueId": "", "Variable": "Doors", "VariableId": 14 },
+    { "Value": "2", "ValueId": "", "Variable": "Doors", "VariableId": 14 },
     { "Value": null, "ValueId": "", "Variable": "Windows", "VariableId": 40 },
     {
       "Value": null,
@@ -142,8 +137,8 @@
       "VariableId": 159
     },
     {
-      "Value": null,
-      "ValueId": null,
+      "Value": "Class 1C: 4,001 - 5,000 lb (1,814 - 2,268 kg)",
+      "ValueId": "12",
       "Variable": "Gross Vehicle Weight Rating",
       "VariableId": 25
     },
@@ -189,18 +184,8 @@
       "Variable": "Gross Vehicle Weight Rating up to",
       "VariableId": 190
     },
-    {
-      "Value": "Not Applicable",
-      "ValueId": "0",
-      "Variable": "Bed Type",
-      "VariableId": 3
-    },
-    {
-      "Value": "Not Applicable",
-      "ValueId": "0",
-      "Variable": "Cab Type",
-      "VariableId": 4
-    },
+    { "Value": null, "ValueId": null, "Variable": "Bed Type", "VariableId": 3 },
+    { "Value": null, "ValueId": null, "Variable": "Cab Type", "VariableId": 4 },
     {
       "Value": "Not Applicable",
       "ValueId": "0",
@@ -268,20 +253,20 @@
       "VariableId": 61
     },
     {
-      "Value": "Automatic",
-      "ValueId": "2",
+      "Value": null,
+      "ValueId": null,
       "Variable": "Transmission Style",
       "VariableId": 37
     },
     {
-      "Value": "4",
+      "Value": null,
       "ValueId": "",
       "Variable": "Transmission Speeds",
       "VariableId": 63
     },
     {
-      "Value": "4WD/4-Wheel Drive/4x4",
-      "ValueId": "2",
+      "Value": "4x2",
+      "ValueId": "7",
       "Variable": "Drive Type",
       "VariableId": 15
     },
@@ -293,8 +278,8 @@
       "VariableId": 145
     },
     {
-      "Value": null,
-      "ValueId": null,
+      "Value": "Hydraulic",
+      "ValueId": "2",
       "Variable": "Brake System Type",
       "VariableId": 42
     },
@@ -389,25 +374,25 @@
       "VariableId": 128
     },
     {
-      "Value": null,
+      "Value": "4",
       "ValueId": "",
       "Variable": "Engine Number of Cylinders",
       "VariableId": 9
     },
     {
-      "Value": "2500",
+      "Value": "2900.0",
       "ValueId": "",
       "Variable": "Displacement (CC)",
       "VariableId": 11
     },
     {
-      "Value": "152.559360236",
+      "Value": "176.96885787472",
       "ValueId": "",
       "Variable": "Displacement (CI)",
       "VariableId": 12
     },
     {
-      "Value": "2.500000",
+      "Value": "2.9",
       "ValueId": "",
       "Variable": "Displacement (L)",
       "VariableId": 13
@@ -419,7 +404,7 @@
       "VariableId": 17
     },
     {
-      "Value": null,
+      "Value": "LLV",
       "ValueId": "",
       "Variable": "Engine Model",
       "VariableId": 18
@@ -431,20 +416,20 @@
       "VariableId": 21
     },
     {
-      "Value": null,
-      "ValueId": null,
+      "Value": "Gasoline",
+      "ValueId": "4",
       "Variable": "Fuel Type - Primary",
       "VariableId": 24
     },
     {
-      "Value": null,
-      "ValueId": null,
+      "Value": "Dual Overhead Cam (DOHC)",
+      "ValueId": "2",
       "Variable": "Valve Train Design",
       "VariableId": 62
     },
     {
-      "Value": null,
-      "ValueId": null,
+      "Value": "In-Line",
+      "ValueId": "1",
       "Variable": "Engine Configuration",
       "VariableId": 64
     },
@@ -485,7 +470,7 @@
       "VariableId": 126
     },
     {
-      "Value": null,
+      "Value": "VVT",
       "ValueId": "",
       "Variable": "Other Engine Info",
       "VariableId": 129
@@ -498,7 +483,7 @@
       "VariableId": 139
     },
     {
-      "Value": null,
+      "Value": "GM",
       "ValueId": "",
       "Variable": "Engine Manufacturer",
       "VariableId": 146
@@ -510,8 +495,8 @@
       "VariableId": 78
     },
     {
-      "Value": "Manual",
-      "ValueId": "1",
+      "Value": null,
+      "ValueId": null,
       "Variable": "Seat Belts Type",
       "VariableId": 79
     },
@@ -522,8 +507,8 @@
       "VariableId": 121
     },
     {
-      "Value": "1st & 2nd Rows",
-      "ValueId": "4",
+      "Value": null,
+      "ValueId": null,
       "Variable": "Curtain Air Bag Locations",
       "VariableId": 55
     },
@@ -534,8 +519,8 @@
       "VariableId": 56
     },
     {
-      "Value": "1st Row (Driver & Passenger)",
-      "ValueId": "3",
+      "Value": null,
+      "ValueId": null,
       "Variable": "Front Air Bag Locations",
       "VariableId": 65
     },
@@ -546,8 +531,8 @@
       "VariableId": 69
     },
     {
-      "Value": "1st Row (Driver & Passenger)",
-      "ValueId": "3",
+      "Value": null,
+      "ValueId": null,
       "Variable": "Side Air Bag Locations",
       "VariableId": 107
     },
@@ -629,12 +614,7 @@
       "Variable": "Parking Assist",
       "VariableId": 105
     },
-    {
-      "Value": "Direct",
-      "ValueId": "1",
-      "Variable": "TPMS",
-      "VariableId": 168
-    },
+    { "Value": null, "ValueId": null, "Variable": "TPMS", "VariableId": 168 },
     {
       "Value": null,
       "ValueId": "",
@@ -726,20 +706,20 @@
       "VariableId": 183
     },
     {
-      "Value": "5-door/4-door hatchback",
-      "ValueId": "05",
+      "Value": "Light Pickup",
+      "ValueId": "34",
       "Variable": "NCSA Body Type",
       "VariableId": 96
     },
     {
-      "Value": "Subaru",
-      "ValueId": "48",
+      "Value": "GMC",
+      "ValueId": "23",
       "Variable": "NCSA Make",
       "VariableId": 97
     },
     {
-      "Value": "Impreza",
-      "ValueId": "038",
+      "Value": "Canyon",
+      "ValueId": "472",
       "Variable": "NCSA Model",
       "VariableId": 98
     },
