@@ -9,6 +9,7 @@ import {
   VINDriveType,
 } from "./types"
 import axios from "axios"
+import { Make } from "./const"
 
 export const parseVinData = (
   vin: string,
@@ -152,6 +153,58 @@ const getMatches = <T>(
   }
 }
 
+const getModelMatch = (
+  vinInfo: IdentifyingInfo,
+  mpgRecord: MPGData
+): boolean => {
+  const defaultMatch = !!(
+    vinInfo.model &&
+    mpgRecord.model.toLowerCase().indexOf(vinInfo.model.toLowerCase()) !== -1
+  )
+
+  if (!vinInfo.make) return defaultMatch
+
+  if (vinInfo.make.toLowerCase() === Make.Mercedes.toLowerCase()) {
+    // Numeric-only models
+    if (vinInfo.model && !Number.isNaN(Number(vinInfo.model))) {
+      const numericModel = Number(vinInfo.model)
+
+      // If a VIN Model is numeric only, match for a MPG Record Model
+      // with the exact numeric model group preceded by no alphanumeric characters
+      // and suffixed by no numeric characters.
+      const matches = mpgRecord.model.match(
+        `(?<![\\w\\d])${numericModel}(?!\\d)`
+      )
+      return !!matches
+    }
+
+    // [X]-Class models
+    if (vinInfo.model && vinInfo.model.toLowerCase().indexOf("class") !== -1) {
+      const classMatch = vinInfo.model.match(/\w+(?=(-Class))/)
+      // console.log("-Class Matches:", classMatch)
+
+      // If we can't get the class prefix, return the default match.
+      if (!classMatch) return defaultMatch
+
+      const classPrefix = classMatch[0]
+      // console.log("classPrefix: ", classPrefix)
+
+      // Match the VIN Model class prefix in the MPG Record Model
+      // Match if the exact class is present, with no alphabetical characters on
+      // either side.
+      // Ex: "G" doesn't match "GLK"
+      // Ex: "C" *does* match "C320"
+      // console.log("mpgRecord.model: ", mpgRecord.model)
+      const modelMatcher = RegExp(`(?<!(\\w+))${classPrefix}(?!([a-z]+))`, "gi")
+      const modelMatch = mpgRecord.model.match(modelMatcher)
+      // console.log("modelMatch: ", modelMatch)
+      return !!modelMatch
+    }
+  }
+
+  return defaultMatch
+}
+
 // Takes a vehicle's identifying info and attempts to look up the corresponding
 // MPG data record. Returns an array of matching MPG Data records, along with a `decidingFactor`,
 // the characteristic that reduced the match count to 1, when applicable.
@@ -171,12 +224,7 @@ export const findMpgData = (
         )
           return false
 
-        if (
-          !vinInfo.model ||
-          mpgRecord.model.toLowerCase().indexOf(vinInfo.model.toLowerCase()) ===
-            -1
-        )
-          return false
+        if (!getModelMatch(vinInfo, mpgRecord)) return false
 
         // The model year is a valid number and matches the mpgRecord year.
         if (
@@ -217,9 +265,9 @@ export const findMpgData = (
         const { drive: vinDriveType } = vinInfo
         const { drive: mpgRecordDriveType } = mpgRecord
 
-        console.log(
-          `vinDriveType: ${vinDriveType}, mpgRecordDriveType: ${mpgRecordDriveType}`
-        )
+        // console.log(
+        //   `vinDriveType: ${vinDriveType}, mpgRecordDriveType: ${mpgRecordDriveType}`
+        // )
         if (!vinDriveType) return false
 
         switch (vinDriveType) {
@@ -256,7 +304,7 @@ export const findMpgData = (
             return mpgRecordDriveType === "Part-time 4-Wheel Drive"
 
           default:
-            console.log(`Other drive type: ${vinDriveType}`)
+            // console.log(`Other drive type: ${vinDriveType}`)
             return false
         }
       },
@@ -273,9 +321,9 @@ export const findMpgData = (
     {
       label: "transmissionStyle",
       matchFn: (mpgRecord): boolean => {
-        console.log(
-          `vinInfo.transmissionStyle: ${vinInfo.transmissionStyle}, mpgRecord.trany: ${mpgRecord.trany}`
-        )
+        // console.log(
+        //   `vinInfo.transmissionStyle: ${vinInfo.transmissionStyle}, mpgRecord.trany: ${mpgRecord.trany}`
+        // )
         // Match on Transmission. Look for the transmission style and speed string anywhere in the mpgRecord's one `trany` string
         return !!(
           vinInfo.transmissionStyle &&

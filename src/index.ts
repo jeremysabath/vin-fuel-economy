@@ -24,10 +24,14 @@ const main = async (): Promise<void> => {
   const results: CombinedData[] = []
 
   // Get a sample of the registration data for testing.
-  const n = registrations.length
-  const startIndex = 0
+  const sample = registrations.filter(
+    (registration): boolean => registration.Make.indexOf("BMW") !== -1
+  )
 
-  const sample = registrations.slice(startIndex, startIndex + n) //sampleSize(registrations, n)
+  const n = registrations.length
+  // const startIndex = 0
+
+  // const sample = registrations.slice(startIndex, startIndex + n) //sampleSize(registrations, n)
   console.log(
     `registrations in sample: ${sample.length}. Total registrations: ${registrations.length}`
   )
