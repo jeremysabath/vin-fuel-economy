@@ -25,7 +25,7 @@ const main = async (): Promise<void> => {
 
   // Get a sample of the registration data for testing.
   const sample = registrations.filter(
-    (registration): boolean => registration.Make.indexOf("BMW") !== -1
+    (registration): boolean => registration.Make.indexOf("FORD") !== -1
   )
 
   const n = registrations.length

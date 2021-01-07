@@ -163,7 +163,9 @@ const getModelMatch = (
   )
 
   if (!vinInfo.make) return defaultMatch
+  if (!vinInfo.model) return defaultMatch
 
+  // Mercedes-Benz Custom Matchers
   if (vinInfo.make.toLowerCase() === Make.Mercedes.toLowerCase()) {
     // Numeric-only models
     if (vinInfo.model && !Number.isNaN(Number(vinInfo.model))) {
@@ -200,6 +202,36 @@ const getModelMatch = (
       // console.log("modelMatch: ", modelMatch)
       return !!modelMatch
     }
+  }
+
+  // Ford Custom Matchers
+  if (vinInfo.make.toLowerCase() === Make.Ford.toLowerCase()) {
+    // Remove the "-" in an "E-350"-style model, resulting in "E350",
+    // matching the MPG Data "spelling".
+    // Match on the "-" character when preceded by "E" or "F", and post-ceded by
+    // a 3-digit number.
+    const regex = RegExp(/(?<=[ef])-(?=\d\d\d)/, "gi")
+    const dehyphenatedModel = vinInfo.model.replace(regex, "")
+
+    // console.log("---")
+    // console.log(
+    //   `mpgRecord.model.toLowerCase(): ${mpgRecord.model.toLowerCase()}`
+    // )
+    // console.log(
+    //   `dehyphenatedModel.toLowerCase(): ${dehyphenatedModel.toLowerCase()}`
+    // )
+    // console.log(
+    //   "Match?",
+    //   mpgRecord.model.toLowerCase().indexOf(dehyphenatedModel.toLowerCase()) !==
+    //     -1
+    // )
+    // console.log("")
+
+    // Return 'true' if the dehyphenated VIN Model is contained in the MPG Record model.
+    return (
+      mpgRecord.model.toLowerCase().indexOf(dehyphenatedModel.toLowerCase()) !==
+      -1
+    )
   }
 
   return defaultMatch
