@@ -486,3 +486,49 @@ export const getVinInfo = async (
     return null
   }
 }
+
+// From a list of MPG Records, return:
+// - the MPG Record with the lowest `comb08` MPG
+// - the range in `comb08` values
+// - the lowest `comb08` value
+// - the highest `comb08` value
+// - the average of all `comb08` values
+export const getMPGRecordSummary = (
+  mpgRecords: MPGData[]
+): {
+  lowestMpgRecord?: MPGData
+  comb08min?: number
+  comb08max?: number
+  comb08mean?: number
+  comb08range?: number
+} => {
+  if (mpgRecords.length === 0) return {}
+  if (mpgRecords.length === 1) return { lowestMpgRecord: mpgRecords[0] }
+
+  let maxMpg: MPGData | undefined
+  let minMpg: MPGData | undefined
+  const comb08values: number[] = []
+
+  mpgRecords.forEach((mpgRecord): void => {
+    const { comb08 } = mpgRecord
+    if (comb08 !== null && comb08 !== undefined) {
+      comb08values.push(comb08)
+
+      if (!maxMpg || comb08 > maxMpg.comb08) maxMpg = mpgRecord
+      if (!minMpg || comb08 < minMpg.comb08) minMpg = mpgRecord
+    }
+  })
+
+  return {
+    lowestMpgRecord: minMpg,
+    comb08min: minMpg ? minMpg.comb08 : undefined,
+    comb08max: maxMpg ? maxMpg.comb08 : undefined,
+    comb08mean:
+      comb08values.reduce((a, b): number => Number(a) + Number(b), 0) /
+      comb08values.length,
+    comb08range:
+      maxMpg && minMpg
+        ? Number(maxMpg.comb08) - Number(minMpg.comb08)
+        : undefined,
+  }
+}

@@ -60,7 +60,14 @@ export type CombinedData = RegistrationInfo & {
 } & Partial<MPGData> & {
     numMatches: number
     matches: string
+    selectedMatch: string
     decidingFactor?: string
+
+    // Only set if multiple matches
+    comb08min?: number
+    comb08max?: number
+    comb08mean?: number
+    comb08range?: number
   }
 
 /* 

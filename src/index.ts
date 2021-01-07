@@ -1,6 +1,11 @@
-import sampleSize from "lodash.samplesize"
 import moment from "moment"
-import { countUnique, findMpgData, getVinInfo, readData } from "./functions"
+import {
+  countUnique,
+  findMpgData,
+  getMPGRecordSummary,
+  getVinInfo,
+  readData,
+} from "./functions"
 import { CombinedData } from "./types"
 import { createObjectCsvWriter } from "csv-writer"
 import mkdirp from "mkdirp"
@@ -24,11 +29,13 @@ const main = async (): Promise<void> => {
   const results: CombinedData[] = []
 
   // Get a sample of the registration data for testing.
-  const sample = registrations.filter(
-    (registration): boolean => registration.Make.indexOf("MAZDA") !== -1
-  )
+  const sample = registrations
+    .filter(
+      (registration): boolean => registration.Make.indexOf("MAZDA") !== -1
+    )
+    .slice(0, 25)
 
-  const n = registrations.length
+  const n = 25
   // const startIndex = 0
 
   // const sample = registrations.slice(startIndex, startIndex + n) //sampleSize(registrations, n)
@@ -53,6 +60,14 @@ const main = async (): Promise<void> => {
           matches.map((match): string => match.id)
         )
 
+      const {
+        lowestMpgRecord,
+        comb08min,
+        comb08max,
+        comb08mean,
+        comb08range,
+      } = getMPGRecordSummary(matches)
+
       const result: CombinedData = {
         ...registration,
         vinMake: vinInfo.make,
@@ -70,9 +85,15 @@ const main = async (): Promise<void> => {
           .map((match): string => `${match.id} - ${match.model}`)
           .toString(),
         decidingFactor,
+        selectedMatch: lowestMpgRecord
+          ? `${lowestMpgRecord.id} - ${lowestMpgRecord.model}`
+          : "",
+        comb08min,
+        comb08max,
+        comb08mean,
+        comb08range,
       }
-      const match = matches.length > 0 ? matches[0] : null
-      if (match) Object.assign(result, match)
+      if (lowestMpgRecord) Object.assign(result, lowestMpgRecord)
 
       results.push(result)
     } else {
@@ -109,7 +130,12 @@ const main = async (): Promise<void> => {
         { id: "Revocation Indicator", title: "Revocation Indicator" },
         { id: "numMatches", title: "Num Matches" },
         { id: "matches", title: "Match IDs" },
+        { id: "selectedMatch", title: "Selected Match" },
         { id: "decidingFactor", title: "Deciding Factor" },
+        { id: "comb08min", title: "comb08min" },
+        { id: "comb08max", title: "comb08max" },
+        { id: "comb08mean", title: "comb08mean" },
+        { id: "comb08range", title: "comb08range" },
 
         // VIN Search Data + corresponding MPG Data fields
         { id: "vinMake", title: "VIN - Make" },
