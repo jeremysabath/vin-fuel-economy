@@ -230,7 +230,7 @@ const getModelMatch = (
     // Match on "Mazda" when post-ceded by a number and remove it.
     const regex = RegExp(/Mazda(?=\d)/, "gi")
     const cleanedModel = vinInfo.model.replace(regex, "")
-    console.log(`rawModel: ${vinInfo.model}, cleanedModel: ${cleanedModel}`)
+    // console.log(`rawModel: ${vinInfo.model}, cleanedModel: ${cleanedModel}`)
 
     // For number-only models, match on the exact number, no surrounding characters.
     if (!Number.isNaN(Number(cleanedModel))) {

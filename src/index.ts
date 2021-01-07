@@ -30,12 +30,7 @@ const main = async (): Promise<void> => {
 
   // Get a sample of the registration data for testing.
   const sample = registrations
-    .filter(
-      (registration): boolean => registration.Make.indexOf("MAZDA") !== -1
-    )
-    .slice(0, 25)
-
-  const n = 25
+  const n = sample.length
   // const startIndex = 0
 
   // const sample = registrations.slice(startIndex, startIndex + n) //sampleSize(registrations, n)
@@ -224,11 +219,25 @@ const main = async (): Promise<void> => {
     console.log(`Finished at ${moment().format("h:mm:ss")}`)
     console.log(`Duration: ${moment().diff(startTime, "second")} seconds`)
 
-    const resultsWithAMatch = results.filter(
-      (result): boolean => result.numMatches > 0
+    // A VIN was successfully matched to MPG data if:
+    // - there is a single match
+    // - there are multiple matches and the `comb08range` is ≤ 2
+    const successCount = results.filter((result): boolean => {
+      if (result.numMatches === 1) return true
+      if (
+        result.numMatches > 1 &&
+        !Number.isNaN(Number(result.comb08range)) &&
+        Number(result.comb08range) <= 2
+      )
+        return true
+      return false
+    })
+
+    console.log(
+      `${successCount.length} matches (either exact match or multi-match with a comb08 range of ≤ 2)`
     )
     console.log(
-      `Match rate: ${((resultsWithAMatch.length / n) * 100).toFixed(2)}%`
+      `Success rate: ${((successCount.length / n) * 100).toFixed(2)}%`
     )
 
     const rawMatchCounts = results.map((result): string =>
