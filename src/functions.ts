@@ -477,7 +477,7 @@ export const getVinInfo = async (
 ): Promise<IdentifyingInfo | null> => {
   try {
     const { data } = await axios.get(
-      `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinExtended/${vin}?format=json&modelyear=${year}`
+      `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinExtended/${vin.trim()}?format=json&modelyear=${year}`
     )
 
     return parseVinData(vin, data.Results)
