@@ -153,6 +153,35 @@ const getMatches = <T>(
   }
 }
 
+const getMakeMatch = (
+  vinInfo: IdentifyingInfo,
+  mpgRecord: MPGData
+): boolean => {
+  if (!vinInfo.make) return false
+  const defaultMatch =
+    vinInfo.make.toLowerCase() === mpgRecord.make.toLowerCase()
+
+  // Custom Toyota/Scion Matcher
+  if (vinInfo.make.toLowerCase() === Make.Toyota.toLowerCase()) {
+    if (!vinInfo.model) return defaultMatch
+
+    // Match on 'Make' if:
+    // - the VIN Make is Toyota
+    // - the VIN Model is Scion
+    // - the MPG Record Make is Scion
+    if (
+      vinInfo.model.toLowerCase().indexOf(Make.Scion.toLowerCase()) !== -1 &&
+      mpgRecord.make.toLowerCase().indexOf(Make.Scion.toLowerCase()) !== -1
+    ) {
+      return true
+    }
+
+    return defaultMatch
+  }
+
+  return defaultMatch
+}
+
 const getModelMatch = (
   vinInfo: IdentifyingInfo,
   mpgRecord: MPGData
@@ -256,6 +285,36 @@ const getModelMatch = (
     }
   }
 
+  // Toyota/Scion Custom Matchers
+  if (vinInfo.make.toLowerCase() === Make.Toyota.toLowerCase()) {
+    // If the Toyota is actually a Scion, as indicated by the Model name...
+    if (vinInfo.model.toLowerCase().indexOf(Make.Scion.toLowerCase()) !== -1) {
+      // Remove the "Scion" from the Model, then compare to the MPG Record model.
+      const regex = RegExp(/Scion /, "gi")
+      const cleanedModel = vinInfo.model.replace(regex, "")
+
+      return (
+        mpgRecord.model.toLowerCase().indexOf(cleanedModel.toLowerCase()) !== -1
+      )
+    }
+
+    // Replace "4-Runner" with "4Runner"
+    if (vinInfo.model === "4-Runner") {
+      const cleanedModel = "4Runner"
+      return (
+        mpgRecord.model.toLowerCase().indexOf(cleanedModel.toLowerCase()) !== -1
+      )
+    }
+
+    // Replace "Corolla Matrix" with "Matrix"
+    if (vinInfo.model === "Corolla Matrix") {
+      const cleanedModel = "Matrix"
+      return (
+        mpgRecord.model.toLowerCase().indexOf(cleanedModel.toLowerCase()) !== -1
+      )
+    }
+  }
+
   return defaultMatch
 }
 
@@ -272,11 +331,7 @@ export const findMpgData = (
     {
       label: "makeModelYear",
       matchFn: (mpgRecord): boolean => {
-        if (
-          !vinInfo.make ||
-          vinInfo.make.toLowerCase() !== mpgRecord.make.toLowerCase()
-        )
-          return false
+        if (!getMakeMatch(vinInfo, mpgRecord)) return false
 
         if (!getModelMatch(vinInfo, mpgRecord)) return false
 
