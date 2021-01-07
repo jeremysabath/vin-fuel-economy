@@ -165,6 +165,58 @@ const getModelMatch = (
   if (!vinInfo.make) return defaultMatch
   if (!vinInfo.model) return defaultMatch
 
+  // Ford Custom Matchers
+  if (vinInfo.make.toLowerCase() === Make.Ford.toLowerCase()) {
+    // Remove the "-" in an "E-350"-style model, resulting in "E350",
+    // matching the MPG Data "spelling".
+    // Match on the "-" character when preceded by "E" or "F", and post-ceded by
+    // a 3-digit number.
+    const regex = RegExp(/(?<=[ef])-(?=\d\d\d)/, "gi")
+    const dehyphenatedModel = vinInfo.model.replace(regex, "")
+
+    // console.log("---")
+    // console.log(
+    //   `mpgRecord.model.toLowerCase(): ${mpgRecord.model.toLowerCase()}`
+    // )
+    // console.log(
+    //   `dehyphenatedModel.toLowerCase(): ${dehyphenatedModel.toLowerCase()}`
+    // )
+    // console.log(
+    //   "Match?",
+    //   mpgRecord.model.toLowerCase().indexOf(dehyphenatedModel.toLowerCase()) !==
+    //     -1
+    // )
+    // console.log("")
+
+    // Return 'true' if the dehyphenated VIN Model is contained in the MPG Record model.
+    return (
+      mpgRecord.model.toLowerCase().indexOf(dehyphenatedModel.toLowerCase()) !==
+      -1
+    )
+  }
+
+  // Mazda Custom Matchers
+  if (vinInfo.make.toLowerCase() === Make.Mazda.toLowerCase()) {
+    // Remove the "Mazda" prefix from "Mazda#"-style models
+    // Match on "Mazda" when post-ceded by a number and remove it.
+    const regex = RegExp(/Mazda(?=\d)/, "gi")
+    const cleanedModel = vinInfo.model.replace(regex, "")
+    console.log(`rawModel: ${vinInfo.model}, cleanedModel: ${cleanedModel}`)
+
+    // For number-only models, match on the exact number, no surrounding characters.
+    if (!Number.isNaN(Number(cleanedModel))) {
+      const exactNumberRegex = RegExp(
+        `(?<![\\w\\d-])${cleanedModel}(?![\\w\\d-])`,
+        "gi"
+      )
+      const match = mpgRecord.model.match(exactNumberRegex)
+      return !!match
+    }
+
+    // For everything else, default match.
+    return defaultMatch
+  }
+
   // Mercedes-Benz Custom Matchers
   if (vinInfo.make.toLowerCase() === Make.Mercedes.toLowerCase()) {
     // Numeric-only models
@@ -202,36 +254,6 @@ const getModelMatch = (
       // console.log("modelMatch: ", modelMatch)
       return !!modelMatch
     }
-  }
-
-  // Ford Custom Matchers
-  if (vinInfo.make.toLowerCase() === Make.Ford.toLowerCase()) {
-    // Remove the "-" in an "E-350"-style model, resulting in "E350",
-    // matching the MPG Data "spelling".
-    // Match on the "-" character when preceded by "E" or "F", and post-ceded by
-    // a 3-digit number.
-    const regex = RegExp(/(?<=[ef])-(?=\d\d\d)/, "gi")
-    const dehyphenatedModel = vinInfo.model.replace(regex, "")
-
-    // console.log("---")
-    // console.log(
-    //   `mpgRecord.model.toLowerCase(): ${mpgRecord.model.toLowerCase()}`
-    // )
-    // console.log(
-    //   `dehyphenatedModel.toLowerCase(): ${dehyphenatedModel.toLowerCase()}`
-    // )
-    // console.log(
-    //   "Match?",
-    //   mpgRecord.model.toLowerCase().indexOf(dehyphenatedModel.toLowerCase()) !==
-    //     -1
-    // )
-    // console.log("")
-
-    // Return 'true' if the dehyphenated VIN Model is contained in the MPG Record model.
-    return (
-      mpgRecord.model.toLowerCase().indexOf(dehyphenatedModel.toLowerCase()) !==
-      -1
-    )
   }
 
   return defaultMatch
