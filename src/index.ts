@@ -234,10 +234,19 @@ const main = async (): Promise<void> => {
     })
 
     console.log(
-      `${successCount.length} matches (either exact match or multi-match with a comb08 range of ≤ 2)`
+      `${successCount.length} matches for ${n} registrations (either exact match or multi-match with a comb08 range of ≤ 2)`
     )
     console.log(
       `Success rate: ${((successCount.length / n) * 100).toFixed(2)}%`
+    )
+
+    // Count number of VINs which we couldn't find data for.
+    const noVINDataCount = results.filter((result): boolean => !result.vinMake)
+      .length
+    console.log(
+      `${noVINDataCount} records (${((noVINDataCount / n) * 100).toFixed(
+        2
+      )}%) with no VIN data`
     )
 
     const rawMatchCounts = results.map((result): string =>
