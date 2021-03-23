@@ -20,14 +20,20 @@ Vehicle Identifying Info:
 
 In some cases, we can't find an exact match in the EPA data because there are multiple records for a particular make, model, and year that can't be uniquely identified by the Identifying Info that we get from the decoded VIN. In those cases, we record the maximum MPG of all of the matches, the minimum, the range, and the mean, so that the user of the data can choose how to represent that vehicle in individual and summary statistics. In all cases, we record the total number of matches, and list the IDs<sup id="a2">[2](#f2)</sup>  of the matching EPA fuel efficiency records so that they can be identified and analyzed after the fact.
 
+## Running the Script
+
+- `npm install`
+- `npm run build` 
+- `node build/index.ts` 🪄
+
 Step 1: Data prep
 =================
 
--   Prepare a spreadsheet of VINs in CSV format so that it can be read into a program.
+-   Prepare a spreadsheet of VINs in CSV format so that it can be read into a program (the script currently expects the filename to be in the directory `data` with the name `/bedford-vehicle-registrations.csv`)
 -   As long as these are complete VINs, no additional info is required.
 -   Any columns in the input spreadsheet other than "VIN" are unused in identifying EPA matches, but are carried over to the final spreadsheet for reference.
 -   In our analysis, we used the "Registration Class" and "Body Type" columns to identify passenger vehicles and distinguish cars from trucks/SUVs in the final analysis.
--   Download the latest vehicle data from the EPA (this is the list of ~40,000 specific vehicles, their key characteristics, and their fuel efficiency data)
+-   Download the latest vehicle data from the EPA (this is the list of ~40,000 specific vehicles, their key characteristics, and their fuel efficiency data). The script currently expects the filename to be in the directory `data` with the name `mpg-data.csv`)   
 -   Available @[  https://www.fueleconomy.gov/feg/ws/index.shtml](https://www.fueleconomy.gov/feg/ws/index.shtml)
 -   Direct link to latest CSV:[  https://www.fueleconomy.gov/feg/epadata/vehicles.csv](https://www.fueleconomy.gov/feg/epadata/vehicles.csv)
 
