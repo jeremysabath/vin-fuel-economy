@@ -24,7 +24,7 @@ In some cases, we can't find an exact match in the EPA data because there are mu
 
 - `npm install`
 - `npm run build` 
-- `node build/index.ts` 🪄
+- `node build/index.js` 🪄
 
 Step 1: Data prep
 =================
