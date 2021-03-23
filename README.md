@@ -29,7 +29,7 @@ In some cases, we can't find an exact match in the EPA data because there are mu
 Step 1: Data prep
 =================
 
--   Prepare a spreadsheet of VINs in CSV format so that it can be read into a program (the script currently expects the filename to be in the directory `data` with the name `/bedford-vehicle-registrations.csv`)
+-   Prepare a spreadsheet of VINs in CSV format so that it can be read into a program (the script currently expects the filename to be in the directory `data` with the name `bedford-vehicle-registrations.csv`)
 -   As long as these are complete VINs, no additional info is required.
 -   Any columns in the input spreadsheet other than "VIN" are unused in identifying EPA matches, but are carried over to the final spreadsheet for reference.
 -   In our analysis, we used the "Registration Class" and "Body Type" columns to identify passenger vehicles and distinguish cars from trucks/SUVs in the final analysis.
