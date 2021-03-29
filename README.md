@@ -22,9 +22,19 @@ In some cases, we can't find an exact match in the EPA data because there are mu
 
 ## Running the Script
 
+With Node and `npm` installed on your machine, open a terminal window, navigate to the `vin-fuel-economy` directory and run the following commands:
+
+*See 'Step 1: Data prep' to learn where to place the input files.*
+
 - `npm install`
 - `npm run build` 
 - `node build/index.js` 🪄
+
+The script then iterates through the inputted VINs, attempting to match them with the relevant EPA fuel efficiency record(s). While it runs, it prints logs to the command line. If something goes wrong, you'll see an error there.
+
+It takes about 2 hours to run 20,000 VINs on a fast Mac. When the script finishes, it will create a `csv` file in a sub-folder called `output` with the filename in the form of `YYYY-MM-DD - HH-MM-SSa-vin-fuel-economy.csv`. Open that up in Excel or RStudio for further analysis.
+
+*Note: The script has only been tested on a Mac running macOS 10.15.*
 
 Step 1: Data prep
 =================
